@@ -1,0 +1,27 @@
+name: critical_habitat
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  # geospatial
+  - geopandas=1.1.3
+  - shapely=2.1.2
+  - rasterio=1.4.4
+  - pyproj=3.7.2
+  - pyarrow=24.0.0
+  # data / ML
+  - numpy=2.4.6
+  - scikit-learn=1.8.0
+  - scipy=1.17.1
+  - pandas
+  # viz
+  - matplotlib=3.10.9
+  - folium=0.20.0
+  # GCS / networking
+  - gcsfs=2026.5.0
+  - requests=2.34.2
+  # notebook
+  - jupyterlab
+  - ipywidgets
