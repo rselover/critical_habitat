@@ -13,30 +13,42 @@ A passing score means the land *looks like* existing critical habitat from the s
 
 ## Setup
 
-### Prerequisites
+### 1. Google Cloud Account
 
-- [Miniconda or Anaconda](https://docs.conda.io/en/latest/miniconda.html)
-- A Google Cloud account with access to the `alphaearth-496814` project
-- `gcloud` CLI installed and authenticated:
+AlphaEarth embeddings are stored in a requester-pays Google Cloud Storage bucket. You need your own GCP project to cover the read costs.
+
+1. Create a Google account if you don't have one
+2. Go to [console.cloud.google.com](https://console.cloud.google.com) and create a new project
+3. Enable billing on the project — GCS egress costs apply when reading the embedding tiles (reads are small at overview levels; expect cents per run, not dollars)
+4. Enable the **Cloud Storage API** for the project: `APIs & Services → Enable APIs → Cloud Storage`
+5. Install the [gcloud CLI](https://cloud.google.com/sdk/docs/install) and authenticate:
 
 ```bash
 gcloud auth application-default login
 ```
 
-### Create the environment
+6. Open the notebook and set your project ID in the AlphaEarth setup cell:
+
+```python
+GCS_PROJECT = "your-gcp-project-id"
+```
+
+### 2. Python Environment
+
+**With conda (recommended):**
 
 ```bash
 conda env create -f environment.yml
 conda activate critical_habitat
 ```
 
-Or with pip:
+**With pip:**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Launch the notebook
+### 3. Launch the Notebook
 
 ```bash
 jupyter lab critical_habitat.ipynb
@@ -46,11 +58,11 @@ jupyter lab critical_habitat.ipynb
 
 | Source | Description |
 |---|---|
-| [USFWS Critical Habitat Portal](https://criticalhabitat.fws.gov/) | Federally designated critical habitat polygons via ArcGIS REST API |
+| [USFWS Critical Habitat Portal](https://criticalhabitat.fws.gov/) | Federally designated critical habitat polygons via ArcGIS REST API — no account required |
 | [AlphaEarth](https://deepmind.google/discover/blog/alphaearth-satellite-imagery-foundation-model/) | Google DeepMind satellite foundation model — 64-dim embeddings at 10 m resolution, served as COGs from GCS |
 
 ## Notes
 
 - The USFWS API returns full multipolygon geometries that intersect the query bounding box — species like Piping Plover have habitat coast-to-coast. Geometries are clipped to NE+NY client-side after fetch.
-- AlphaEarth embeddings are read from a requester-pays GCS bucket (`gs://alphaearth_foundations/`). GCS charges apply to the `alphaearth-496814` project.
+- AlphaEarth embeddings are read from a requester-pays GCS bucket (`gs://alphaearth_foundations/`). Read costs are billed to whichever GCP project you set in `GCS_PROJECT`.
 - Bulk habitat extraction uses overview level 4 (~160 m) to minimize data transfer. Single parcel testing uses level 1 (~20 m) to ensure enough pixels within small polygon boundaries.
